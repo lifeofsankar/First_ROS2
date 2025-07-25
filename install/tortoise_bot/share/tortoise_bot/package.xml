@@ -3,7 +3,7 @@
 <package format="3">
   <name>tortoise_bot</name>
   <version>0.0.0</version>
-  <description>Tortoise Bot package for ROS2 simulation and control</description>
+  <description>Tortoise Bot package for ROS2 simulation and control with LIDAR processing</description>
   <maintainer email="jaisankar@asimovtrainees.com">admin</maintainer>
   <license>Apache-2.0</license>
 
@@ -17,6 +17,8 @@
   
   <depend>joint_state_publisher</depend>
   <depend>robot_state_publisher</depend>
+
+  <exec_depend>python3-numpy</exec_depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

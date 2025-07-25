@@ -16,6 +16,8 @@ test/test_copyright.py
 test/test_flake8.py
 test/test_pep257.py
 tortoise_bot/__init__.py
+tortoise_bot/distance_monitor.py
+tortoise_bot/lidar_processor.py
 tortoise_bot/simple_joint_publisher.py
 urdf/simple_bot.urdf
 worlds/empty.sdf

@@ -30,7 +30,9 @@ setup(
             'tortoise_controller = tortoise_bot.tortoise_controller:main',
             'fake_joint_publisher = tortoise_bot.fake_joint_publisher:main',
             'turtle_bot_teleop = tortoise_bot.turtle_bot_teleop:main',
-            'velocity_controller = tortoise_bot.velocity_controller:main',  # Add missing entry
+            'velocity_controller = tortoise_bot.velocity_controller:main',
+            'lidar_processor = tortoise_bot.lidar_processor:main',  # Add LIDAR processor
+            'distance_monitor = tortoise_bot.distance_monitor:main',  # Add distance monitor
         ],
     },
 )

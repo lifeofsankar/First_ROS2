@@ -1,6 +1,10 @@
+/home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot/distance_monitor.py
 /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot/simple_joint_publisher.py
+/home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot/lidar_processor.py
 /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot/__init__.py
+/home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot/__pycache__/distance_monitor.cpython-312.pyc
 /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot/__pycache__/simple_joint_publisher.cpython-312.pyc
+/home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot/__pycache__/lidar_processor.cpython-312.pyc
 /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot/__pycache__/__init__.cpython-312.pyc
 /home/admin/my_workspace/install/tortoise_bot/share/ament_index/resource_index/packages/tortoise_bot
 /home/admin/my_workspace/install/tortoise_bot/share/tortoise_bot/package.xml
@@ -17,7 +21,9 @@
 /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot-0.0.0-py3.12.egg-info/top_level.txt
 /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot-0.0.0-py3.12.egg-info/entry_points.txt
 /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot-0.0.0-py3.12.egg-info/PKG-INFO
+/home/admin/my_workspace/install/tortoise_bot/lib/tortoise_bot/distance_monitor
 /home/admin/my_workspace/install/tortoise_bot/lib/tortoise_bot/fake_joint_publisher
+/home/admin/my_workspace/install/tortoise_bot/lib/tortoise_bot/lidar_processor
 /home/admin/my_workspace/install/tortoise_bot/lib/tortoise_bot/simple_joint_publisher
 /home/admin/my_workspace/install/tortoise_bot/lib/tortoise_bot/tortoise_controller
 /home/admin/my_workspace/install/tortoise_bot/lib/tortoise_bot/turtle_bot_teleop

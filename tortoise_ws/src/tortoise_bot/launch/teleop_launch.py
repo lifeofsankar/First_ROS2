@@ -7,7 +7,8 @@ from launch_ros.actions import Node
 
 def generate_launch_description():
     """
-    Launch file that starts Gazebo Harmonic, spawns the robot, and connects the controls.
+    Launch file that starts Gazebo Harmonic, spawns the robot with LIDAR, 
+    connects the controls, and starts LIDAR processing.
     """
     # Paths
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
@@ -43,7 +44,7 @@ def generate_launch_description():
         output='screen'
     )
 
-    # Start ROS-Gazebo Bridge
+    # Start ROS-Gazebo Bridge for cmd_vel
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -51,10 +52,31 @@ def generate_launch_description():
         output='screen'
     )
 
+    # Start ROS-Gazebo Bridge for LIDAR
+    lidar_bridge = Node(
+        package='ros_gz_bridge',
+        executable='parameter_bridge',
+        arguments=['/scan@sensor_msgs/msg/LaserScan@gz.msgs.LaserScan'],
+        output='screen'
+    )
+
+    # Start LIDAR Processor Node
+    lidar_processor = Node(
+        package='tortoise_bot',
+        executable='lidar_processor',
+        name='lidar_processor',
+        output='screen',
+        parameters=[
+            {'use_sim_time': True}
+        ]
+    )
+
     # The Launch Description
     return LaunchDescription([
         gazebo,
         spawn_robot,
         robot_state_publisher,
-        bridge
+        bridge,
+        lidar_bridge,
+        lidar_processor
     ])

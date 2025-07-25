@@ -1,5 +1,7 @@
 [console_scripts]
+distance_monitor = tortoise_bot.distance_monitor:main
 fake_joint_publisher = tortoise_bot.fake_joint_publisher:main
+lidar_processor = tortoise_bot.lidar_processor:main
 simple_joint_publisher = tortoise_bot.simple_joint_publisher:main
 tortoise_controller = tortoise_bot.tortoise_controller:main
 turtle_bot_teleop = tortoise_bot.turtle_bot_teleop:main
