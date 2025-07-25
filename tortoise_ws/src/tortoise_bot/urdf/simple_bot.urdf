@@ -2,7 +2,8 @@
 <robot name="tbot_v7">
 
   <!-- MATERIAL DEFINITIONS -->
-  <!-- Dark Blue -->
+
+<!-- Dark Blue -->
   <material name="dark_blue">
   <color rgba="0.1 0.2 0.7 1"/>
 </material>
@@ -25,6 +26,11 @@
 <!-- Dark Gray (black) -->
 <material name="dark_gray">
   <color rgba="0.1 0.1 0.1 1"/>
+</material>
+
+<!-- Yellow -->
+<material name="yellow">
+  <color rgba="1 1 0 1"/>
 </material>
 
   <!-- LINK DEFINITIONS -->
@@ -173,6 +179,31 @@
     </inertial>
   </link>
 
+  <!-- LIDAR SENSOR LINK -->
+  <link name="lidar_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.03" length="0.04"/>
+      </geometry>
+      <material name="yellow"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </visual>
+    
+    <collision>
+      <geometry>
+        <cylinder radius="0.03" length="0.04"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </collision>
+    
+    <inertial>
+      <mass value="0.1"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/>
+    </inertial>
+  </link>
+
+
   <!-- JOINT DEFINITIONS -->
   
   <!-- LEFT WHEEL JOINT -->
@@ -214,6 +245,14 @@
     <origin xyz="-0.05 0 -0.05" rpy="0 0 0"/>  <!-- Slightly Rear, Below Chassis -->
   </joint>
 
+<!-- LIDAR JOINT -->
+  <joint name="lidar_joint" type="fixed">
+    <parent link="sensor_mount"/>
+    <child link="lidar_link"/>
+    <origin xyz="0 0 0.08" rpy="0 0 0"/>  <!-- On top of sensor mount -->
+  </joint>
+
+
   <!-- GAZEBO PROPERTIES -->
   
   <gazebo reference="base_link">
@@ -250,6 +289,42 @@
 
   <gazebo reference="battery_compartment">
     <material>Gazebo/Green</material>
+  </gazebo>
+
+<gazebo reference="lidar_link">
+    <material>Gazebo/Yellow</material>
+    <sensor name="lidar_sensor" type="ray">
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>10</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>360</samples>
+            <resolution>1.000000</resolution>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.05</min>
+          <max>12.0</max>
+          <resolution>0.015</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="scan" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <remapping>~/out:=scan</remapping>
+        </ros>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>lidar_link</frame_name>
+      </plugin>
+    </sensor>
   </gazebo>
 
   <!-- PLUGIN -->
