@@ -1,0 +1,26 @@
+[1.163s] Invoking command in '/home/admin/my_workspace/tortoise_ws/src/tortoise_bot': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/admin/my_workspace/build/tortoise_bot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/tortoise_bot build --build-base /home/admin/my_workspace/build/tortoise_bot/build install --record /home/admin/my_workspace/build/tortoise_bot/install.log --single-version-externally-managed install_data
+[1.528s] running egg_info
+[1.564s] writing ../../../build/tortoise_bot/tortoise_bot.egg-info/PKG-INFO
+[1.565s] writing dependency_links to ../../../build/tortoise_bot/tortoise_bot.egg-info/dependency_links.txt
+[1.565s] writing entry points to ../../../build/tortoise_bot/tortoise_bot.egg-info/entry_points.txt
+[1.565s] writing requirements to ../../../build/tortoise_bot/tortoise_bot.egg-info/requires.txt
+[1.565s] writing top-level names to ../../../build/tortoise_bot/tortoise_bot.egg-info/top_level.txt
+[1.634s] reading manifest file '../../../build/tortoise_bot/tortoise_bot.egg-info/SOURCES.txt'
+[1.635s] writing manifest file '../../../build/tortoise_bot/tortoise_bot.egg-info/SOURCES.txt'
+[1.635s] running build
+[1.635s] running build_py
+[1.635s] running install
+[1.643s] running install_lib
+[1.677s] running install_data
+[1.677s] copying urdf/simple_bot.urdf -> /home/admin/my_workspace/install/tortoise_bot/share/tortoise_bot/urdf
+[1.677s] running install_egg_info
+[1.709s] removing '/home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot-0.0.0-py3.12.egg-info' (and everything under it)
+[1.710s] Copying ../../../build/tortoise_bot/tortoise_bot.egg-info to /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot-0.0.0-py3.12.egg-info
+[1.710s] running install_scripts
+[1.959s] Installing fake_joint_publisher script to /home/admin/my_workspace/install/tortoise_bot/lib/tortoise_bot
+[1.960s] Installing simple_joint_publisher script to /home/admin/my_workspace/install/tortoise_bot/lib/tortoise_bot
+[1.960s] Installing tortoise_controller script to /home/admin/my_workspace/install/tortoise_bot/lib/tortoise_bot
+[1.960s] Installing turtle_bot_teleop script to /home/admin/my_workspace/install/tortoise_bot/lib/tortoise_bot
+[1.960s] Installing velocity_controller script to /home/admin/my_workspace/install/tortoise_bot/lib/tortoise_bot
+[1.960s] writing list of installed files to '/home/admin/my_workspace/build/tortoise_bot/install.log'
+[1.989s] Invoked command in '/home/admin/my_workspace/tortoise_ws/src/tortoise_bot' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/admin/my_workspace/build/tortoise_bot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/tortoise_bot build --build-base /home/admin/my_workspace/build/tortoise_bot/build install --record /home/admin/my_workspace/build/tortoise_bot/install.log --single-version-externally-managed install_data

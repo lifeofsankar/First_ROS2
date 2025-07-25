@@ -1,0 +1,59 @@
+[0.855s] Invoking command in '/home/admin/my_workspace/tortoise_ws/src/tortoise_bot': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/admin/my_workspace/build/tortoise_bot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/tortoise_bot build --build-base /home/admin/my_workspace/build/tortoise_bot/build install --record /home/admin/my_workspace/build/tortoise_bot/install.log --single-version-externally-managed install_data
+[1.147s] running egg_info
+[1.147s] creating ../../../build/tortoise_bot/tortoise_bot.egg-info
+[1.171s] writing ../../../build/tortoise_bot/tortoise_bot.egg-info/PKG-INFO
+[1.171s] writing dependency_links to ../../../build/tortoise_bot/tortoise_bot.egg-info/dependency_links.txt
+[1.172s] writing entry points to ../../../build/tortoise_bot/tortoise_bot.egg-info/entry_points.txt
+[1.172s] writing requirements to ../../../build/tortoise_bot/tortoise_bot.egg-info/requires.txt
+[1.172s] writing top-level names to ../../../build/tortoise_bot/tortoise_bot.egg-info/top_level.txt
+[1.172s] writing manifest file '../../../build/tortoise_bot/tortoise_bot.egg-info/SOURCES.txt'
+[1.221s] reading manifest file '../../../build/tortoise_bot/tortoise_bot.egg-info/SOURCES.txt'
+[1.222s] writing manifest file '../../../build/tortoise_bot/tortoise_bot.egg-info/SOURCES.txt'
+[1.222s] running build
+[1.222s] running build_py
+[1.222s] creating /home/admin/my_workspace/build/tortoise_bot/build
+[1.222s] creating /home/admin/my_workspace/build/tortoise_bot/build/lib
+[1.222s] creating /home/admin/my_workspace/build/tortoise_bot/build/lib/tortoise_bot
+[1.222s] copying tortoise_bot/tortoise_controller.py -> /home/admin/my_workspace/build/tortoise_bot/build/lib/tortoise_bot
+[1.222s] copying tortoise_bot/turtle_bot_teleop.py -> /home/admin/my_workspace/build/tortoise_bot/build/lib/tortoise_bot
+[1.223s] copying tortoise_bot/velocity_controller.py -> /home/admin/my_workspace/build/tortoise_bot/build/lib/tortoise_bot
+[1.223s] copying tortoise_bot/simple_joint_publisher.py -> /home/admin/my_workspace/build/tortoise_bot/build/lib/tortoise_bot
+[1.223s] copying tortoise_bot/__init__.py -> /home/admin/my_workspace/build/tortoise_bot/build/lib/tortoise_bot
+[1.223s] running install
+[1.229s] running install_lib
+[1.255s] creating /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot
+[1.255s] copying /home/admin/my_workspace/build/tortoise_bot/build/lib/tortoise_bot/tortoise_controller.py -> /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot
+[1.255s] copying /home/admin/my_workspace/build/tortoise_bot/build/lib/tortoise_bot/turtle_bot_teleop.py -> /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot
+[1.255s] copying /home/admin/my_workspace/build/tortoise_bot/build/lib/tortoise_bot/velocity_controller.py -> /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot
+[1.255s] copying /home/admin/my_workspace/build/tortoise_bot/build/lib/tortoise_bot/simple_joint_publisher.py -> /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot
+[1.255s] copying /home/admin/my_workspace/build/tortoise_bot/build/lib/tortoise_bot/__init__.py -> /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot
+[1.255s] byte-compiling /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot/tortoise_controller.py to tortoise_controller.cpython-312.pyc
+[1.256s] byte-compiling /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot/turtle_bot_teleop.py to turtle_bot_teleop.cpython-312.pyc
+[1.257s] byte-compiling /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot/velocity_controller.py to velocity_controller.cpython-312.pyc
+[1.258s] byte-compiling /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot/simple_joint_publisher.py to simple_joint_publisher.cpython-312.pyc
+[1.258s] byte-compiling /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot/__init__.py to __init__.cpython-312.pyc
+[1.258s] running install_data
+[1.258s] creating /home/admin/my_workspace/install/tortoise_bot/share/ament_index
+[1.258s] creating /home/admin/my_workspace/install/tortoise_bot/share/ament_index/resource_index
+[1.258s] creating /home/admin/my_workspace/install/tortoise_bot/share/ament_index/resource_index/packages
+[1.258s] copying resource/tortoise_bot -> /home/admin/my_workspace/install/tortoise_bot/share/ament_index/resource_index/packages
+[1.258s] copying package.xml -> /home/admin/my_workspace/install/tortoise_bot/share/tortoise_bot
+[1.258s] creating /home/admin/my_workspace/install/tortoise_bot/share/tortoise_bot/launch
+[1.258s] copying launch/tortoise_launch.py -> /home/admin/my_workspace/install/tortoise_bot/share/tortoise_bot/launch
+[1.259s] copying launch/teleop_launch.py -> /home/admin/my_workspace/install/tortoise_bot/share/tortoise_bot/launch
+[1.259s] creating /home/admin/my_workspace/install/tortoise_bot/share/tortoise_bot/urdf
+[1.259s] copying urdf/simple_bot.urdf -> /home/admin/my_workspace/install/tortoise_bot/share/tortoise_bot/urdf
+[1.259s] creating /home/admin/my_workspace/install/tortoise_bot/share/tortoise_bot/rviz
+[1.259s] copying rviz/tortoise_config.rviz -> /home/admin/my_workspace/install/tortoise_bot/share/tortoise_bot/rviz
+[1.259s] creating /home/admin/my_workspace/install/tortoise_bot/share/tortoise_bot/worlds
+[1.259s] copying worlds/empty.sdf -> /home/admin/my_workspace/install/tortoise_bot/share/tortoise_bot/worlds
+[1.259s] running install_egg_info
+[1.286s] Copying ../../../build/tortoise_bot/tortoise_bot.egg-info to /home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages/tortoise_bot-0.0.0-py3.12.egg-info
+[1.286s] running install_scripts
+[1.437s] Installing fake_joint_publisher script to /home/admin/my_workspace/install/tortoise_bot/lib/tortoise_bot
+[1.437s] Installing simple_joint_publisher script to /home/admin/my_workspace/install/tortoise_bot/lib/tortoise_bot
+[1.437s] Installing tortoise_controller script to /home/admin/my_workspace/install/tortoise_bot/lib/tortoise_bot
+[1.437s] Installing turtle_bot_teleop script to /home/admin/my_workspace/install/tortoise_bot/lib/tortoise_bot
+[1.437s] Installing velocity_controller script to /home/admin/my_workspace/install/tortoise_bot/lib/tortoise_bot
+[1.437s] writing list of installed files to '/home/admin/my_workspace/build/tortoise_bot/install.log'
+[1.461s] Invoked command in '/home/admin/my_workspace/tortoise_ws/src/tortoise_bot' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/admin/my_workspace/build/tortoise_bot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/admin/my_workspace/install/tortoise_bot/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../../../build/tortoise_bot build --build-base /home/admin/my_workspace/build/tortoise_bot/build install --record /home/admin/my_workspace/build/tortoise_bot/install.log --single-version-externally-managed install_data
