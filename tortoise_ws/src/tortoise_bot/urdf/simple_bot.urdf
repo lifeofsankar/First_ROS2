@@ -291,17 +291,25 @@
     <material>Gazebo/Green</material>
   </gazebo>
 
-<gazebo reference="lidar_link">
-    <material>Gazebo/Yellow</material>
-    <sensor name="lidar_sensor" type="ray">
+<gazebo>
+  <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+    <render_engine>ogre2</render_engine>
+  </plugin>
+</gazebo>
+
+  <gazebo reference="lidar_link">
+    <sensor name="lidar_sensor" type="gpu_lidar">
+      <pose>0 0 0 0 0 0</pose>
+      <topic>scan</topic>
+      <update_rate>10</update_rate>
       <always_on>true</always_on>
       <visualize>true</visualize>
-      <update_rate>10</update_rate>
-      <ray>
+      <gz:frame_id xmlns:gz="https://gazebosim.org">lidar_link</gz:frame_id>
+      <lidar>
         <scan>
           <horizontal>
             <samples>360</samples>
-            <resolution>1.000000</resolution>
+            <resolution>1</resolution>
             <min_angle>-3.14159</min_angle>
             <max_angle>3.14159</max_angle>
           </horizontal>
@@ -316,11 +324,16 @@
           <mean>0.0</mean>
           <stddev>0.01</stddev>
         </noise>
-      </ray>
-      </sensor>
+      </lidar>
+    </sensor>
   </gazebo>
 
+
+
   <!-- PLUGIN -->
+
+
+     <!-- Differential Drive Plugin -->
   <gazebo>
     <plugin
       filename="gz-sim-diff-drive-system"

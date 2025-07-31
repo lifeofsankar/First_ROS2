@@ -1,0 +1,9 @@
+lidar_processor:
+  ros__parameters:
+    field_of_view_degrees: 15.0
+    moving_avg_window: 5
+
+distance_monitor:
+  ros__parameters:
+    min_safe_distance: 0.5
+    collision_avoidance_enabled: true

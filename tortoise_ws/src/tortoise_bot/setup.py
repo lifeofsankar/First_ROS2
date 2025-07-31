@@ -12,11 +12,15 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', package_name, 'launch'), glob('launch/*.py')),
+        (os.path.join('share', package_name, 'launch'), [
+            'launch/teleop_launch.py',
+            'launch/test_gazebo.launch.py'
+        ]),
         (os.path.join('share', package_name, 'urdf'), glob('urdf/*.urdf')),
         (os.path.join('share', package_name, 'rviz'), glob('rviz/*.rviz')),
         (os.path.join('share', package_name, 'worlds'), glob('worlds/*.world')),
         (os.path.join('share', package_name, 'worlds'), glob('worlds/*.sdf')),  # Add SDF support
+        (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -31,8 +35,7 @@ setup(
             'fake_joint_publisher = tortoise_bot.fake_joint_publisher:main',
             'turtle_bot_teleop = tortoise_bot.turtle_bot_teleop:main',
             'velocity_controller = tortoise_bot.velocity_controller:main',
-            'lidar_processor = tortoise_bot.lidar_processor:main',  # Add LIDAR processor
-            'distance_monitor = tortoise_bot.distance_monitor:main',  # Add distance monitor
+            'lidar_processor = tortoise_bot.lidar_processor:main'  # Add LIDAR processor
         ],
     },
 )
