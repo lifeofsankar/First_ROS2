@@ -111,7 +111,7 @@
   <link name="front_caster">
     <visual>
       <geometry>
-        <sphere radius="0.04"/>  <!-- 4r -->
+        <sphere radius="0.14"/>  <!-- 4r -->
       </geometry>
       <material name="medium_gray"/>
       <origin xyz="0 0 0" rpy="0 0 0"/>
