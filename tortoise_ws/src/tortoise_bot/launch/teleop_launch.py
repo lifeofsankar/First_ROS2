@@ -65,12 +65,12 @@ def generate_launch_description():
     )
 
     # Start LIDAR Processor Node
-    lidar_processor = Node(
-        package='tortoise_bot',
-        executable='lidar_processor',
-        output='screen',
-        parameters=[params_file]
-    )
+    # lidar_processor = Node(
+    #     package='tortoise_bot',
+    #     executable='lidar_processor',
+    #     output='screen',
+    #     parameters=[params_file]
+    # )
     
     # Add static transform publisher for LIDAR
     static_tf_publisher = Node(
@@ -88,6 +88,6 @@ def generate_launch_description():
         robot_state_publisher,
         cmd_vel_bridge, # <-- Use the new variable name
         lidar_bridge,
-        lidar_processor,
+        #lidar_processor,
         static_tf_publisher
     ])

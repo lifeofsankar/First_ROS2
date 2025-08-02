@@ -111,7 +111,7 @@
   <link name="front_caster">
     <visual>
       <geometry>
-        <sphere radius="0.14"/>  <!-- 4r -->
+        <sphere radius="0.08"/>  <!-- 4r -->
       </geometry>
       <material name="medium_gray"/>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -119,13 +119,37 @@
     
     <collision>
       <geometry>
-        <sphere radius="0.04"/>
+        <sphere radius="0.08"/>
       </geometry>
       <origin xyz="0 0 0" rpy="0 0 0"/>
     </collision>
     
     <inertial>
-      <mass value="0.15"/>
+      <mass value="0.25"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.0002" ixy="0" ixz="0" iyy="0.0002" iyz="0" izz="0.0002"/>
+    </inertial>
+  </link>
+
+  <!-- REAR CASTER WHEEL -->
+  <link name="rear_caster">
+    <visual>
+      <geometry>
+        <sphere radius="0.08"/>
+      </geometry>
+      <material name="medium_gray"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </visual>
+    
+    <collision>
+      <geometry>
+        <sphere radius="0.08"/>
+      </geometry>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </collision>
+    
+    <inertial>
+      <mass value="0.25"/>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <inertia ixx="0.0002" ixy="0" ixz="0" iyy="0.0002" iyz="0" izz="0.0002"/>
     </inertial>
@@ -210,16 +234,16 @@
   <joint name="left_wheel_joint" type="continuous">
     <parent link="base_link"/>
     <child link="left_wheel"/>
-    <origin xyz="-0.18 0.175 -0.04" rpy="0 0 0"/>  <!-- Rear Left -->
+    <origin xyz="0 0.175 -0.04" rpy="0 0 0"/>  <!-- Centered under base -->
     <axis xyz="0 1 0"/>
-    <dynamics damping="0.2" friction="0.15"/>  <!-- Increased damping for stability -->
+    <dynamics damping="0.2" friction="0.15"/>
   </joint>
 
   <!-- RIGHT WHEEL JOINT -->
   <joint name="right_wheel_joint" type="continuous">
     <parent link="base_link"/>
     <child link="right_wheel"/>
-    <origin xyz="-0.18 -0.175 -0.04" rpy="0 0 0"/>  <!-- Rear Right -->
+    <origin xyz="0 -0.175 -0.04" rpy="0 0 0"/>  <!-- Centered under base -->
     <axis xyz="0 1 0"/>
     <dynamics damping="0.2" friction="0.15"/>
   </joint>
@@ -228,21 +252,28 @@
   <joint name="front_caster_joint" type="fixed">
     <parent link="base_link"/>
     <child link="front_caster"/>
-    <origin xyz="0.20 0 -0.06" rpy="0 0 0"/>  <!-- Front Center -->
+    <origin xyz="0.15 0 -0.06" rpy="0 0 0"/>  <!-- 0.15 -->
+  </joint>
+
+  <!-- REAR CASTER JOINT -->
+  <joint name="rear_caster_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="rear_caster"/>
+    <origin xyz="-0.15 0 -0.06" rpy="0 0 0"/>  <!-- Rear support -->
   </joint>
 
   <!-- SENSOR MOUNT JOINT -->
   <joint name="sensor_mount_joint" type="fixed">
     <parent link="base_link"/>
     <child link="sensor_mount"/>
-    <origin xyz="0.05 0 0.09" rpy="0 0 0"/>  <!-- Slightly Forward, On Top -->
+    <origin xyz="0 0 0.09" rpy="0 0 0"/>  <!-- Slightly Forward, On Top -->
   </joint>
 
   <!-- BATTERY COMPARTMENT JOINT -->
   <joint name="battery_joint" type="fixed">
     <parent link="base_link"/>
     <child link="battery_compartment"/>
-    <origin xyz="-0.05 0 -0.05" rpy="0 0 0"/>  <!-- Slightly Rear, Below Chassis -->
+    <origin xyz="-0 0 -0.05" rpy="0 0 0"/>  <!-- Slightly Rear, Below Chassis -->
   </joint>
 
 <!-- LIDAR JOINT -->
@@ -283,6 +314,14 @@
     <kd>1.0</kd>
   </gazebo>
 
+  <gazebo reference="rear_caster">
+    <material>Gazebo/Black</material>
+    <mu1>0.05</mu1> 
+    <mu2>0.05</mu2>
+    <kp>1000000.0</kp>
+    <kd>1.0</kd>
+  </gazebo>
+
   <gazebo reference="sensor_mount">
     <material>Gazebo/Red</material>
   </gazebo>
@@ -297,7 +336,7 @@
   </plugin>
 </gazebo>
 
-  <gazebo reference="lidar_link">
+<gazebo reference="lidar_link">
     <sensor name="lidar_sensor" type="gpu_lidar">
       <pose>0 0 0 0 0 0</pose>
       <topic>scan</topic>
@@ -310,12 +349,18 @@
           <horizontal>
             <samples>360</samples>
             <resolution>1</resolution>
-            <min_angle>-3.14159</min_angle>
-            <max_angle>3.14159</max_angle>
+            <min_angle>-0.2618</min_angle>
+            <max_angle>0.2618</max_angle>
           </horizontal>
+          <vertical>
+            <samples>1</samples>
+            <resolution>1</resolution>
+            <min_angle>0</min_angle>  <!-- Slightly downward -->
+            <max_angle>0</max_angle>   <!-- Slightly upward -->
+          </vertical>
         </scan>
         <range>
-          <min>0.05</min>
+          <min>0.25</min>  <!-- Increased minimum range to avoid ground detection -->
           <max>12.0</max>
           <resolution>0.015</resolution>
         </range>
