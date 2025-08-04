@@ -39,7 +39,7 @@
   <link name="base_link">
     <visual>
       <geometry>
-        <box size="0.5 0.3 0.06"/>  <!-- 40x30x6 -->
+        <box size="0.5 0.3 0.06"/>  <!-- Size -->
       </geometry>
       <material name="dark_blue"/>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -63,7 +63,7 @@
   <link name="left_wheel">
     <visual>
       <geometry>
-        <cylinder radius="0.10" length="0.05"/>  <!-- 10r 5t -->
+        <cylinder radius="0.10" length="0.05"/>  <!-- Size -->
       </geometry>
       <material name="dark_gray"/>
       <origin xyz="0 0 0" rpy="1.5708 0 0"/>
@@ -111,7 +111,7 @@
   <link name="front_caster">
     <visual>
       <geometry>
-        <sphere radius="0.08"/>  <!-- 4r -->
+        <sphere radius="0.08"/>  <!-- Size -->
       </geometry>
       <material name="medium_gray"/>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -159,7 +159,7 @@
   <link name="sensor_mount">
     <visual>
       <geometry>
-        <box size="0.10 0.10 0.12"/>  <!-- (Sensor Size)10x10x12 -->
+        <box size="0.10 0.10 0.12"/>  <!-- Size -->
       </geometry>
       <material name="red"/>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -183,7 +183,7 @@
   <link name="battery_compartment">
     <visual>
       <geometry>
-        <box size="0.20 0.15 0.04"/>  <!-- (Battery Size)20x15x4 -->
+        <box size="0.20 0.15 0.04"/>  <!-- Size -->
       </geometry>
       <material name="bright_green"/>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -252,7 +252,7 @@
   <joint name="front_caster_joint" type="fixed">
     <parent link="base_link"/>
     <child link="front_caster"/>
-    <origin xyz="0.15 0 -0.06" rpy="0 0 0"/>  <!-- 0.15 -->
+    <origin xyz="0.15 0 -0.06" rpy="0 0 0"/>  <!-- Front support -->
   </joint>
 
   <!-- REAR CASTER JOINT -->
@@ -355,12 +355,12 @@
           <vertical>
             <samples>1</samples>
             <resolution>1</resolution>
-            <min_angle>0</min_angle>  <!-- Slightly downward -->
-            <max_angle>0</max_angle>   <!-- Slightly upward -->
+            <min_angle>0</min_angle>  
+            <max_angle>0</max_angle>   
           </vertical>
         </scan>
         <range>
-          <min>0.25</min>  <!-- Increased minimum range to avoid ground detection -->
+          <min>0.25</min>  
           <max>12.0</max>
           <resolution>0.015</resolution>
         </range>

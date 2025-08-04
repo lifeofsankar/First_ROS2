@@ -6,10 +6,7 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
 
 def generate_launch_description():
-    """
-    Launch file that starts Gazebo Harmonic, spawns the robot with LIDAR, 
-    connects the controls, and starts LIDAR processing.
-    """
+   
     # Paths
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
     pkg_tortoise_bot = get_package_share_directory('tortoise_bot')
@@ -24,7 +21,7 @@ def generate_launch_description():
         launch_arguments={'gz_args': '-r empty.sdf'}.items(),
     )
 
-    # Spawn the robot
+    # Spawn robot
     spawn_robot = Node(
         package='ros_gz_sim',
         executable='create',
@@ -64,21 +61,13 @@ def generate_launch_description():
         parameters=[{'use_sim_time':True}]
     )
 
-    # Start LIDAR Processor Node
-    # lidar_processor = Node(
-    #     package='tortoise_bot',
-    #     executable='lidar_processor',
-    #     output='screen',
-    #     parameters=[params_file]
+    # # Static_TF_Publisher
+    # static_tf_publisher = Node(
+    #     package='tf2_ros',
+    #     executable='static_transform_publisher',
+    #     arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'lidar_link'],
+    #     output='screen'
     # )
-    
-    # Add static transform publisher for LIDAR
-    static_tf_publisher = Node(
-        package='tf2_ros',
-        executable='static_transform_publisher',
-        arguments=['0', '0', '0', '0', '0', '0', 'base_link', 'lidar_link'],
-        output='screen'
-    )
 
 
     # The Launch Description
@@ -86,8 +75,7 @@ def generate_launch_description():
         gazebo,
         spawn_robot,
         robot_state_publisher,
-        cmd_vel_bridge, # <-- Use the new variable name
+        cmd_vel_bridge,
         lidar_bridge,
-        #lidar_processor,
-        static_tf_publisher
+        # static_tf_publisher
     ])
