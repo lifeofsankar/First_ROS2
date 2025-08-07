@@ -35,7 +35,8 @@ setup(
             'fake_joint_publisher = tortoise_bot.fake_joint_publisher:main',
             'turtle_bot_teleop = tortoise_bot.turtle_bot_teleop:main',
             'velocity_controller = tortoise_bot.velocity_controller:main',
-            'lidar_processor = tortoise_bot.lidar_processor:main'  # Add LIDAR processor
+            'lidar_processor = tortoise_bot.lidar_processor:main',  # Add LIDAR processor
+            'ball_follower = tortoise_bot.ball_follower:main'
         ],
     },
 )
