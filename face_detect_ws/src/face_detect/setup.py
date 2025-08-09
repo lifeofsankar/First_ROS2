@@ -11,7 +11,10 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
-    install_requires=['setuptools'],
+    install_requires=[  'setuptools',
+                        'opencv-python>=4.5.0',
+                        'numpy>=1.20.0'
+                      ],
     zip_safe=True,
     maintainer='admin',
     maintainer_email='jaisankar@asimovtrainees.com',
