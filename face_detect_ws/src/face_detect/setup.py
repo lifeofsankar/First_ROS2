@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'camera_publisher = face_detect.camera_publisher:main'
+            'camera_publisher = face_detect.camera_publisher:main',
+            'face_detect_node = face_detect.face_detect_node:main',
         ],
     },
 )
