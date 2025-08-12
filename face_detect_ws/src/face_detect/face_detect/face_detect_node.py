@@ -36,22 +36,29 @@ class FaceDetectNode(Node):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         
         # IMPROVED: Better detection settings
-        faces = self.face_cascade.detectMultiScale(gray, 1.1, 5, minSize=(30, 30))
-        
-        # IMPROVED: Better face processing with confidence
-        for i, (x, y, w, h) in enumerate(faces):
-            # Simple confidence based on face size
-            face_size = w * h
-            confidence = min(95, 50 + face_size/100)
+        faces, _, levelWeights = self.face_cascade.detectMultiScale3(
+            gray,
+            scaleFactor = 1.1,
+            minNeighbors = 5,
+            minSize=(30, 30),
+            outputRejectLevels = True
+        )
+        if len(levelWeights) > 0:
+            # IMPROVED: Better face processing with confidence
+            for (x, y, w, h), confidence in zip(faces, levelWeights):
+                # Simple confidence based on face size
+                normalized_confidence = min(100.0, (confidence / 4.0) * 100)
             
             # Choose color based on confidence
-            if confidence > 80:
-                color = (0, 255, 0)  # Green for good
-            else:
-                color = (0, 255, 255)  # Yellow for ok
+                if normalized_confidence > 75:
+                    color = (0, 255, 0)  # Green for high confidence
+                elif normalized_confidence > 40:
+                    color = (0, 255, 255)  # Yellow for medium confidence
+                else:
+                    color = (0, 0, 255)    # Red for low confidence
             
             cv2.rectangle(frame, (x, y), (x+w, y+h), color, 2)
-            cv2.putText(frame, f'{confidence:.0f}%', (x, y-10), 
+            cv2.putText(frame, f'{normalized_confidence:.0f}%', (x, y-10), 
                         cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
             
         cv2.imshow("Face Detection", frame)
@@ -79,8 +86,8 @@ class FaceDetectNode(Node):
             marker.color.b = 0.0
             marker.color.a = 0.8
             marker.pose.position.x = 0.5
-            marker.pose.position.y = (x - frame.shape[1]/2)/500.0
-            marker.pose.position.z = (y - frame.shape[0]/2)/500.0
+            marker.pose.position.y = (x + w/2 - frame.shape[1]/2)/500.0
+            marker.pose.position.z = (y + h/2 - frame.shape[0]/2)/500.0
             marker_array.markers.append(marker)
             
         self.marker_pub.publish(marker_array)
