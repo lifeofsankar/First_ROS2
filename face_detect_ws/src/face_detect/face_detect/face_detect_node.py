@@ -39,8 +39,8 @@ class FaceDetectNode(Node):
         faces, _, levelWeights = self.face_cascade.detectMultiScale3(
             gray,
             scaleFactor = 1.1,
-            minNeighbors = 5,
-            minSize=(30, 30),
+            minNeighbors = 8,
+            minSize=(50, 50),
             outputRejectLevels = True
         )
         if len(levelWeights) > 0:
