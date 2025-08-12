@@ -6,8 +6,9 @@ from sensor_msgs.msg import Image
 from visualization_msgs.msg import Marker, MarkerArray
 from cv_bridge import CvBridge
 import cv2
-import time
-
+import numpy as np
+import os
+from ament_index_python.packages import get_package_share_directory
 
 class FaceDetectNode(Node):
     def __init__(self):
@@ -18,76 +19,86 @@ class FaceDetectNode(Node):
             self.image_callback,
             10
         )
-        #Rviz Marker
         self.marker_pub = self.create_publisher(MarkerArray, '/faces', 10)
-        
         self.bridge = CvBridge()
-        self.face_count = 0  # NEW: Simple counter
+
+        # --- NEW: Load the DNN Model ---
+        # Get the path to your package's share directory
+        package_share_directory = get_package_share_directory('face_detect')
         
-        self.face_cascade = cv2.CascadeClassifier(
-            cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
-        )
+        # Define paths to the model files
+        prototxt_path = os.path.join(package_share_directory, 'models', 'deploy.prototxt.txt')
+        model_path = os.path.join(package_share_directory, 'models', 'res10_300x300_ssd_iter_140000.caffemodel')
         
-        self.get_logger().info('FaceDetectNode started')
+        # Load the serialized model from disk
+        self.get_logger().info('Loading DNN face detector model...')
+        self.net = cv2.dnn.readNetFromCaffe(prototxt_path, model_path)
+        self.get_logger().info('Model loaded successfully.')
+
+        # Confidence threshold to filter weak detections
+        self.confidence_threshold = 0.5
+
+        self.get_logger().info('FaceDetectNode started with DNN model.')
         
     def image_callback(self, msg):
+        frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+        (h, w) = frame.shape[:2]
+
+        # --- NEW: DNN Detection Logic ---
+        # Create a blob from the image and pass it through the network
+        blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300, 300)), 1.0,
+                                     (300, 300), (104.0, 177.0, 123.0))
         
-        frame = self.bridge.imgmsg_to_cv2(msg,"bgr8")
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        
-        # IMPROVED: Better detection settings
-        faces, _, levelWeights = self.face_cascade.detectMultiScale3(
-            gray,
-            scaleFactor = 1.1,
-            minNeighbors = 8,
-            minSize=(50, 50),
-            outputRejectLevels = True
-        )
-        if len(levelWeights) > 0:
-            # IMPROVED: Better face processing with confidence
-            for (x, y, w, h), confidence in zip(faces, levelWeights):
-                # Simple confidence based on face size
-                normalized_confidence = min(100.0, (confidence / 4.0) * 100)
-            
-            # Choose color based on confidence
-                if normalized_confidence > 75:
-                    color = (0, 255, 0)  # Green for high confidence
-                elif normalized_confidence > 40:
-                    color = (0, 255, 255)  # Yellow for medium confidence
-                else:
-                    color = (0, 0, 255)    # Red for low confidence
-            
-            cv2.rectangle(frame, (x, y), (x+w, y+h), color, 2)
-            cv2.putText(frame, f'{normalized_confidence:.0f}%', (x, y-10), 
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2)
-            
-        cv2.imshow("Face Detection", frame)
+        self.net.setInput(blob)
+        detections = self.net.forward()
+
+        detected_faces = []
+
+        # Loop over the detections
+        for i in range(0, detections.shape[2]):
+            # Extract the confidence (i.e., probability) of the detection
+            confidence = detections[0, 0, i, 2]
+
+            # Filter out weak detections by ensuring the confidence is > threshold
+            if confidence > self.confidence_threshold:
+                # Compute the (x, y)-coordinates of the bounding box
+                box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+                (startX, startY, endX, endY) = box.astype("int")
+                
+                # Add the detected face to our list
+                face_w = endX - startX
+                face_h = endY - startY
+                detected_faces.append((startX, startY, face_w, face_h))
+
+                # Draw the bounding box and confidence on the frame
+                text = f"{confidence * 100:.2f}%"
+                y = startY - 10 if startY - 10 > 10 else startY + 10
+                cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 255, 0), 2)
+                cv2.putText(frame, text, (startX, y),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
+
+        cv2.imshow("Face Detection (DNN)", frame)
         cv2.waitKey(1)
-        
-        # IMPROVED: Count faces and log sometimes
-        self.face_count += len(faces)
-        if self.face_count % 50 == 0 and self.face_count > 0:
-            self.get_logger().info(f'Total faces detected: {self.face_count}')
-        
-        # Your original marker code (keeping it simple)
+
+        # Publish RViz markers for the detected faces
         marker_array = MarkerArray()
-        for i, (x,y,w,h) in enumerate(faces):
+        for i, (x, y, w, h) in enumerate(detected_faces):
             marker = Marker()
             marker.header.frame_id = "camera_link"
             marker.header.stamp = self.get_clock().now().to_msg()
             marker.id = i
             marker.type = Marker.CUBE
             marker.action = Marker.ADD
-            marker.scale.x = w / 100
-            marker.scale.y = h /100
+            marker.scale.x = w / 100.0
+            marker.scale.y = h / 100.0
             marker.scale.z = 0.05
-            marker.color.r = 1.0
-            marker.color.g = 0.0
+            marker.color.r = 0.0
+            marker.color.g = 1.0
             marker.color.b = 0.0
-            marker.color.a = 0.8
+            marker.color.a = 0.7
             marker.pose.position.x = 0.5
-            marker.pose.position.y = (x + w/2 - frame.shape[1]/2)/500.0
-            marker.pose.position.z = (y + h/2 - frame.shape[0]/2)/500.0
+            marker.pose.position.y = -(x + w/2 - frame.shape[1]/2) / 500.0
+            marker.pose.position.z = -(y + h/2 - frame.shape[0]/2) / 500.0
             marker_array.markers.append(marker)
             
         self.marker_pub.publish(marker_array)
@@ -101,7 +112,7 @@ def main(args=None):
         pass
     node.destroy_node()
     rclpy.shutdown()
-    cv2.destroyAllWindows()  # FIXED: The typo
+    cv2.destroyAllWindows()
 
 if __name__ == '__main__':
     main()
