@@ -22,30 +22,30 @@ class FaceDetectNode(Node):
         self.marker_pub = self.create_publisher(MarkerArray, '/faces', 10)
         self.bridge = CvBridge()
 
-        # --- NEW: Load the DNN Model ---
-        # Get the path to your package's share directory
+        # DNN Model
+        # path to your package's share directory
         package_share_directory = get_package_share_directory('face_detect')
         
-        # Define paths to the model files
+        # paths to the model files
         prototxt_path = os.path.join(package_share_directory, 'models', 'deploy.prototxt.txt')
         model_path = os.path.join(package_share_directory, 'models', 'res10_300x300_ssd_iter_140000.caffemodel')
         
-        # Load the serialized model from disk
+        # Loading model
         self.get_logger().info('Loading DNN face detector model...')
         self.net = cv2.dnn.readNetFromCaffe(prototxt_path, model_path)
         self.get_logger().info('Model loaded successfully.')
 
-        # Confidence threshold to filter weak detections
+        # filter weak detections
         self.confidence_threshold = 0.5
 
-        self.get_logger().info('FaceDetectNode started with DNN model.')
+        self.get_logger().info('FaceDetectNode started.')
         
     def image_callback(self, msg):
         frame = self.bridge.imgmsg_to_cv2(msg, "bgr8")
         (h, w) = frame.shape[:2]
 
-        # --- NEW: DNN Detection Logic ---
-        # Create a blob from the image and pass it through the network
+        # DNN Detection Logic
+        # Create blob from image then pass it to network
         blob = cv2.dnn.blobFromImage(cv2.resize(frame, (300, 300)), 1.0,
                                      (300, 300), (104.0, 177.0, 123.0))
         
@@ -54,23 +54,23 @@ class FaceDetectNode(Node):
 
         detected_faces = []
 
-        # Loop over the detections
+        # Looping
         for i in range(0, detections.shape[2]):
-            # Extract the confidence (i.e., probability) of the detection
+            # Get confidence of detection
             confidence = detections[0, 0, i, 2]
 
-            # Filter out weak detections by ensuring the confidence is > threshold
+            # Filter out weak detections
             if confidence > self.confidence_threshold:
-                # Compute the (x, y)-coordinates of the bounding box
+                # Compute coordinates of bounding box
                 box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
                 (startX, startY, endX, endY) = box.astype("int")
                 
-                # Add the detected face to our list
+                # Detected face list
                 face_w = endX - startX
                 face_h = endY - startY
                 detected_faces.append((startX, startY, face_w, face_h))
 
-                # Draw the bounding box and confidence on the frame
+                # Draw the bounding box and confidence
                 text = f"{confidence * 100:.2f}%"
                 y = startY - 10 if startY - 10 > 10 else startY + 10
                 cv2.rectangle(frame, (startX, startY), (endX, endY), (0, 255, 0), 2)
@@ -80,7 +80,7 @@ class FaceDetectNode(Node):
         cv2.imshow("Face Detection (DNN)", frame)
         cv2.waitKey(1)
 
-        # Publish RViz markers for the detected faces
+        # Publish RViz markers
         marker_array = MarkerArray()
         for i, (x, y, w, h) in enumerate(detected_faces):
             marker = Marker()

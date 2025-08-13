@@ -8,14 +8,14 @@ class CameraPublisherNode(Node):
     def __init__(self):
         super().__init__('camera_publisher')
 
-        self.publisher = self.create_publisher(Image, '/camera/image_raw',10)
-        self.bridge = CvBridge()
-        self.get_logger().info("CameraPublisherNode started")
+        self.publisher = self.create_publisher(Image, '/camera/image_raw',10) 
+        self.bridge = CvBridge()                                              
+        self.get_logger().info("CameraPublisherNode started")                   #
 
         self.cap = cv2.VideoCapture(0)
-        if not self.cap.isOpened():
-            self.get_logger().error("Cannot open WebCam")
-            exit()
+        if not self.cap.isOpened():                                             #
+            self.get_logger().error("Cannot open WebCam")                       #
+            exit()                                                              #
 
         timer_period =1.0/30.0
         self.timer = self.create_timer(timer_period, self.timer_callback)
