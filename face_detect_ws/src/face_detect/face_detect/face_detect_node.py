@@ -36,7 +36,7 @@ class FaceDetectNode(Node):
         self.get_logger().info('Model loaded successfully.')
 
         # filter weak detections
-        self.confidence_threshold = 0.5
+        self.confidence_threshold = 0.57
 
         self.get_logger().info('FaceDetectNode started.')
         
