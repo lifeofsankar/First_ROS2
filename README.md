@@ -53,6 +53,18 @@ Terminal 3
 
 # --- Task 15 --- #
 
+Terminal 1
+#1 cd ~/my_workspace/face_detect_ws
+#2 source /opt/ros/jazzy/setup.bash
+#3 source install/setup.bash
+#4 ros2 run face_detect face_detect
+
+Terminal 2
+
+#1 cd ~/my_workspace/face_detect_ws
+#2 source install/setup.bash
+#3 ros2 launch face_detect web_processor
+
 **💡 BONUS: If something doesn’t work, rebuild the package
 cd ~/my_workspace/tortoise_ws
 colcon build --packages-select tortoise_bot
