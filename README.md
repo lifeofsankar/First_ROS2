@@ -67,6 +67,8 @@ Terminal 2
 #2 source install/setup.bash
 #3 ros2 launch face_detect web_processor
 
+# --- Task 16 --- #
+
 **💡 BONUS: If something doesn’t work, rebuild the package
 cd ~/my_workspace/tortoise_ws
 colcon build --packages-select tortoise_bot
