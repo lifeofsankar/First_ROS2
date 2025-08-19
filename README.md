@@ -1,11 +1,14 @@
 # --- TASK 01 --- #
 
 **RViz (Robot Visualization)**
+
+Terminal
 #1 colcon build
 #2 source install/setup.bash
 #3 ros2 launch tortoise_bot tortoise_launch.py
 
 **Gazebo Simulation with Teleop**
+
 Terminal 1
 #1 colcon build
 #2 source install/setup.bash
