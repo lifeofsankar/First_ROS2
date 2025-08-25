@@ -74,6 +74,21 @@ Terminal 2
 
 # --- Task 23 --- #
 
+Terminal 1
+#1 cd ~/my_workspace/tortoise_ws
+#2 colcon build
+#3 source install/setup.bash
+#4 ros2 launch tortoise_bot teleop_launch.py
+
+Terminal 2
+#1 cd ~/my_workspace/tortoise_ws
+#2 python3 -m html.server
+	(open "localhost:8000/web.html" in any browser)
+ 
+Terminal 3
+#1 cd ~/my_workspace/tortoise_ws
+#2 python3 simple_bridge.py
+
 **💡 BONUS: If something doesn’t work, rebuild the package
 cd ~/my_workspace/tortoise_ws
 colcon build --packages-select tortoise_bot
