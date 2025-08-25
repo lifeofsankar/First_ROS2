@@ -96,15 +96,22 @@ Terminal 3
 
 Terminal 1
 
+
 #1 cd ~/my_workspace/face_detect_ws
+
 #2 source /opt/ros/jazzy/setup.bash
+
 #3 source install/setup.bash
+
 #4 ros2 run face_detect face_detect
 
 Terminal 2
 
+
 #1 cd ~/my_workspace/face_detect_ws
+
 #2 source install/setup.bash
+
 #3 ros2 launch face_detect web_processor
 
 # --- Task 16 --- #
@@ -113,24 +120,36 @@ Terminal 2
 
 Terminal 1
 
+
 #1 cd ~/my_workspace/tortoise_ws
+
 #2 colcon build
+
 #3 source install/setup.bash
+
 #4 ros2 launch tortoise_bot teleop_launch.py
 
 Terminal 2
 
+
 #1 cd ~/my_workspace/tortoise_ws
+
 #2 python3 -m html.server
 	(open "localhost:8000/web.html" in any browser)
  
 Terminal 3
 
+
 #1 cd ~/my_workspace/tortoise_ws
+
 #2 python3 simple_bridge.py
 
-**💡 BONUS: If something doesn’t work, rebuild the package
-cd ~/my_workspace/tortoise_ws
-colcon build --packages-select tortoise_bot
-source install/setup.bash**
+**💡 BONUS: If something doesn’t work, rebuild the package**
+
+
+**cd ~/my_workspace/tortoise_ws**
+
+**colcon build --packages-select tortoise_bot**
+
+**source install/setup.bash**
 
