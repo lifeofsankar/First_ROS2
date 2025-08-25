@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Robot Control</title>
+    <style>
+        /* Centers the content on the page */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f2f5;
+            font-family: sans-serif;
+        }
+
+        /* Container for the status and D-pad */
+        .control-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px; /* Space between status and D-pad */
+        }
+
+        /* Style for the status indicator */
+        #status-indicator {
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .status-connecting {
+            background-color: #e0e0e0;
+            color: #555;
+        }
+        .status-connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Creates the 3x3 grid for the D-pad layout */
+        .d-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 80px);
+            grid-template-rows: repeat(3, 80px);
+            gap: 8px;
+        }
+
+        /* Basic style for all control buttons */
+        .control-btn {
+            border-radius: 12px;
+            border: 2px solid #ccc;
+            background-color: #fff;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #555;
+            cursor: pointer;
+            transition: background-color 0.1s ease;
+        }
+        .control-btn:hover {
+            background-color: #e9e9e9;
+        }
+        .control-btn:active {
+            background-color: #dcdcdc;
+            border-color: #aaa;
+        }
+
+        /* Placing each button in its correct grid cell */
+        .forward  { grid-column: 2; grid-row: 1; }
+        .left     { grid-column: 1; grid-row: 2; }
+        .stop     { grid-column: 2; grid-row: 2; }
+        .right    { grid-column: 3; grid-row: 2; }
+        .backward { grid-column: 2; grid-row: 3; }
+
+        /* Special styling for the stop button */
+        .stop {
+            background-color: #f85149;
+            border-color: #c03d36;
+            color: white;
+        }
+        .stop:hover {
+            background-color: #d1443d;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="control-container">
+        <div id="status-indicator" class="status-connecting">● Connecting...</div>
+    
+        <div class="d-pad">
+            <button class="control-btn forward" onclick="sendCommand('forward')">↑</button>
+            <button class="control-btn left" onclick="sendCommand('left')">←</button>
+            <button class="control-btn stop" onclick="sendCommand('stop')">■</button>
+            <button class="control-btn right" onclick="sendCommand('right')">→</button>
+            <button class="control-btn backward" onclick="sendCommand('backward')">↓</button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        const SPEED = 1.0;
+        let isProcessing = false;
+
+        // Get the status indicator element from the page
+        const statusIndicator = document.getElementById('status-indicator');
+
+        // --- Updates the status indicator's text and color ---
+        function updateStatus(status, message) {
+            statusIndicator.textContent = `● ${message}`;
+            statusIndicator.className = `status-${status}`; // e.g., "status-connected"
+        }
+
+        // --- Sends a command to the robot ---
+        async function sendCommand(command) {
+            if (isProcessing) return;
+            
+            isProcessing = true;
+            
+            try {
+                const payload = {
+                    command: command,
+                    parameters: { speed: SPEED }
+                };
+                const response = await fetch(`${API_URL}/robot/command`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!response.ok) throw new Error('Command failed');
+
+                // If command is successful, we know we are connected
+                updateStatus('connected', 'Connected');
+            } catch (error) {
+                // If a command fails, we are likely disconnected
+                updateStatus('disconnected', 'Disconnected');
+                console.error(`Error sending command: ${error.message}`);
+            } finally {
+                isProcessing = false;
+            }
+        }
+        
+        // --- Checks the robot API status endpoint ---
+        async function testConnection() {
+            try {
+                // The 'signal' option creates a timeout for the fetch request
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 2000); // 2-second timeout
+
+                const response = await fetch(`${API_URL}/robot/status`, { signal: controller.signal });
+                clearTimeout(timeoutId);
+
+                if (!response.ok) throw new Error('Status check failed');
+                updateStatus('connected', 'Connected');
+            } catch (error) {
+                updateStatus('disconnected', 'Disconnected');
+            }
+        }
+
+        // --- Keyboard Controls ---
+        document.addEventListener('keydown', function(event) {
+            if (event.repeat) return;
+            
+            const keyMap = {
+                'w': 'forward', 'arrowup': 'forward',
+                's': 'backward', 'arrowdown': 'backward',
+                'a': 'left', 'arrowleft': 'left',
+                'd': 'right', 'arrowright': 'right',
+                ' ': 'stop', 'escape': 'stop'
+            };
+            
+            const command = keyMap[event.key.toLowerCase()];
+            if (command) {
+                event.preventDefault();
+                sendCommand(command);
+            }
+        });
+
+        // --- Initial and periodic connection checks ---
+        testConnection(); // Check immediately when the page loads
+        setInterval(testConnection, 5000); // Check again every 5 seconds
+    </script>
+
+</body>
+</html>
