@@ -1,9 +1,6 @@
-#!/usr/bin/env python3
-"""
-Simple TurtleBot Web Control Bridge
-Just copy, run, and go!
-"""
+# Web Control Bridge
 
+#!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
