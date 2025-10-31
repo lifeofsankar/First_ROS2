@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import rclpy
+import statistics
 from rclpy.node import Node
 from sensor_msgs.msg import LaserScan
 from std_msgs.msg import Float32
@@ -41,7 +42,7 @@ class LidarDistanceMonitor(Node):
 
             # Step 3: Determine closest object
             if valid_ranges:
-                closest_distance = min(valid_ranges)
+                closest_distance = statistics.median(valid_ranges)
                 
                 # Check if real object detected (not max range)
                 if closest_distance < msg.range_max * 0.95:
@@ -52,11 +53,12 @@ class LidarDistanceMonitor(Node):
                     
                     # Print distance
                     if closest_distance < 0.6:
-                        print(f"🔴 {closest_distance:.2f}m")
+                        self.get_logger().warn(f"🔴 {closest_distance:.2f}m")
                     elif closest_distance < 0.9:
-                        print(f"🟡 {closest_distance:.2f}m")
+                        self.get_logger().info(f"🟡 {closest_distance:.2f}m")
                     else:
-                        print(f"🟢 {closest_distance:.2f}m")
+                        self.get_logger().debug(f"🟢 {closest_distance:.2f}m")
+
                     
             # Step 4: Collision avoidance
                     if closest_distance < self.min_safe_distance:
