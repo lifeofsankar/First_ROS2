@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<robot name="turtlebot3_waffle">
+<robot name="turtlebot3_waffle" xmlns:gz="http://gazebosim.org/sdf">
 
   <!-- Colors: JCB Industrial Style -->
 <material name="sensor_blue">
@@ -33,7 +33,7 @@
     <visual>
       <origin xyz="-0.064 0 0.0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://tortoisebot_description/meshes/bases/waffle_base.stl"
+        <mesh filename="/home/admin/First_ROS2/turtlebot3_ws/src/tortoisebot_description/meshes/bases/waffle_base.stl"
               scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="jcb_orange"/>
@@ -42,7 +42,7 @@
     <collision>
       <origin xyz="-0.064 0 0.0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://tortoisebot_description/meshes/bases/waffle_base.stl"
+        <mesh filename="/home/admin/First_ROS2/turtlebot3_ws/src/tortoisebot_description/meshes/bases/waffle_base.stl"
               scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
@@ -61,7 +61,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://tortoisebot_description/meshes/wheels/left_tire.stl"
+        <mesh filename="/home/admin/First_ROS2/turtlebot3_ws/src/tortoisebot_description/meshes/wheels/left_tire.stl"
               scale="0.001 0.001 0.001"/>
       </geometry>
         <material name="glossy_red"/>
@@ -70,7 +70,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
         <geometry>
-          <mesh filename="package://tortoisebot_description/meshes/wheels/left_tire.stl"
+          <mesh filename="/home/admin/First_ROS2/turtlebot3_ws/src/tortoisebot_description/meshes/wheels/left_tire.stl"
               scale="0.001 0.001 0.001"/>
         </geometry>  
     </collision>
@@ -89,7 +89,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://tortoisebot_description/meshes/wheels/right_tire.stl"
+        <mesh filename="/home/admin/First_ROS2/turtlebot3_ws/src/tortoisebot_description/meshes/wheels/right_tire.stl"
               scale="0.001 0.001 0.001"/>
       </geometry>
        <material name="glossy_red"/>
@@ -98,7 +98,7 @@
     <collision>
     <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <mesh filename="package://tortoisebot_description/meshes/wheels/right_tire.stl"
+        <mesh filename="/home/admin/First_ROS2/turtlebot3_ws/src/tortoisebot_description/meshes/wheels/right_tire.stl"
               scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
@@ -118,7 +118,7 @@
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
         <!-- Ball caster -->
-        <sphere radius="0.012"/>
+        <sphere radius="0.006"/>
       </geometry>
       <material name="matte_black"/>
     </visual>
@@ -126,7 +126,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <sphere radius="0.012"/>
+        <sphere radius="0.006"/>
       </geometry>
     </collision>
 
@@ -145,7 +145,7 @@
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <sphere radius="0.012"/>
+        <sphere radius="0.005"/>
       </geometry>
       <material name="matte_black"/>
     </visual>
@@ -153,7 +153,7 @@
     <collision>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-        <sphere radius="0.012"/>
+        <sphere radius="0.005"/>
       </geometry>
     </collision>
 
@@ -166,13 +166,14 @@
         izz="0.00001"/>
     </inertial>
   </link>
+  
   <!-- IMU -->
   <!-- <link name="imu_link"/> -->
 
   <link name="base_scan">
     <visual>
       <geometry>
-        <mesh filename="package://tortoisebot_description/meshes/sensors/lds.stl"
+        <mesh filename="/home/admin/First_ROS2/turtlebot3_ws/src/tortoisebot_description/meshes/sensors/lds.stl"
               scale="0.001 0.001 0.001"/>
       </geometry>
       <material name="jcb_yellow"/>
@@ -180,7 +181,7 @@
 
     <collision>
       <geometry>
-        <mesh filename="package://tortoisebot_description/meshes/sensors/lds.stl"
+        <mesh filename="/home/admin/First_ROS2/turtlebot3_ws/src/tortoisebot_description/meshes/sensors/lds.stl"
               scale="0.001 0.001 0.001"/>
       </geometry>
     </collision>
@@ -206,10 +207,7 @@
   </link> -->
 
 
-
-
 <!-- #Joints# -->
-
 
   <!-- Base footprint -->
   <joint name="base_joint" type="fixed">
@@ -234,16 +232,18 @@
   </joint>
 
 <!-- Caster Joint -->
-  <joint name="caster_back_right_joint" type="fixed">
+  <joint name="caster_back_right_joint" type="continuous">
     <parent link="base_link"/>
     <child link="caster_back_right_link"/>
-    <origin xyz="-0.177 -0.064 0.002" rpy="0 0 0"/>  <!-- 0.012 - 0.010 = 0.002 -->
+    <origin xyz="-0.177 -0.064 -0.007" rpy="0 0 0"/>  <!-- 0.012 - 0.010 = 0.002 -->
+    <!-- <axis xyz="0 0 1"/> -->
   </joint>
 
-  <joint name="caster_back_left_joint" type="fixed">
+  <joint name="caster_back_left_joint" type="continuous">
     <parent link="base_link"/>
     <child link="caster_back_left_link"/>
-    <origin xyz="-0.177 0.064 0.002" rpy="0 0 0"/>  <!-- 0.012 - 0.010 = 0.002 -->
+    <origin xyz="-0.177 0.064 -0.007" rpy="0 0 0"/>  <!-- 0.012 - 0.010 = 0.002 -->
+    <!-- <axis xyz="0 0 1"/> -->
   </joint>
  
   <!-- IMU -->
@@ -268,9 +268,7 @@
   </joint> -->
 
 
-
   <!-- #Gazebo# -->
-
 
   <!-- Gazebo physics for right caster -->
   <gazebo reference="caster_back_right_link">
@@ -314,7 +312,6 @@
       <always_on>true</always_on>
       <visualize>true</visualize>
       <gz:frame_id>base_scan</gz:frame_id>
-
 
       <lidar>
         <scan>

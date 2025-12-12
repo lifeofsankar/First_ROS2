@@ -1,42 +1,46 @@
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-
+from launch.substitutions import Command, LaunchConfiguration
 import os
-
 
 def generate_launch_description():
 
-    # Arguments
+    # Default URDF path
+    default_urdf = "/home/admin/First_ROS2/arm_ws/src/arm_description/urdf/arm.urdf.xacro"
+
+    # Launch argument
     urdf_path_arg = DeclareLaunchArgument(
         name='urdf_path',
-        default_value='',
-        description='/home/admin/Dec4/src/arm_description/urdf/arm.urdf.xacro'
+        default_value=default_urdf,
+        description='Absolute path to the URDF/XACRO file'
     )
 
+    # Holds the runtime path
     urdf_path = LaunchConfiguration('urdf_path')
 
-    # Read the URDF at launch time
-    with open(os.path.expanduser(urdf_path.perform({})), 'r') as f:
-        robot_description_content = f.read()
-
+    robot_description = {
+        'robot_description': Command(['xacro ', urdf_path])
+    }
+    
     robot_state_pub = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
-        parameters=[{'robot_description': robot_description_content}],
-        output='both'
+        parameters=[robot_description],
+        output='screen'
     )
 
     joint_state_gui = Node(
         package='joint_state_publisher_gui',
-        executable='joint_state_publisher_gui'
+        executable='joint_state_publisher_gui',
+        output='screen'
     )
 
     rviz = Node(
         package='rviz2',
         executable='rviz2',
-        name='rviz2'
+        name='rviz2',
+        output='screen'
     )
 
     return LaunchDescription([

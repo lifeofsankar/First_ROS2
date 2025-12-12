@@ -107,14 +107,14 @@ def generate_launch_description():
                 ),
 
                 # RViz2 - For visualization
-                Node(
-                    package='rviz2',
-                    executable='rviz2',
-                    name='rviz2',
-                    arguments=['-d', rviz_config_file],
-                    parameters=[{'use_sim_time': True}],
-                    output='screen'
-                ),
+                # Node(
+                #     package='rviz2',
+                #     executable='rviz2',
+                #     name='rviz2',
+                #     arguments=['-d', rviz_config_file],
+                #     parameters=[{'use_sim_time': True}],
+                #     output='screen'
+                # ),
 
                 # EKF Node (Robot Localization)
                 Node(

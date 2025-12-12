@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<xacro:macro name="add_gazebo_plugins" params="" 
+    xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <gazebo>
+    <plugin
+      filename="libgz_ros2_control-system.so"
+      name="gz_ros2_control::GazeboSystem">
+      <parameters>
+        <ros2_control_config>
+          $(find arm_bringup)/config/ros2_controllers.yaml
+        </ros2_control_config>
+      </parameters>
+    </plugin>
+  </gazebo>
+
+</xacro:macro>
