@@ -9,7 +9,7 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
 
     # ----------------------------------------------------------------------
-    # LOAD URDF
+    # LOAD URDF (XACRO)
     # ----------------------------------------------------------------------
     desc_pkg = get_package_share_directory('arm_description')
     urdf_file = os.path.join(desc_pkg, 'urdf', 'arm.urdf.xacro')
@@ -19,7 +19,7 @@ def generate_launch_description():
     }
 
     # ----------------------------------------------------------------------
-    # START GAZEBO HARMONIC (gz sim)
+    # GAZEBO WORLD
     # ----------------------------------------------------------------------
     world_file = os.path.join(
         get_package_share_directory("arm_gazebo"),
@@ -28,29 +28,12 @@ def generate_launch_description():
     )
 
     gz_sim = ExecuteProcess(
-        cmd=["gz", "sim", "-v", "4", "-r", world_file],
+        cmd=["gz", "sim", "-r", world_file],
         output="screen"
     )
 
     # ----------------------------------------------------------------------
-    # SPAWN ROBOT INTO GZ SIM
-    # ----------------------------------------------------------------------
-    spawn_entity = Node(
-    package="ros_gz_sim",
-    executable="create",
-    arguments=[
-        "-topic", "robot_description",
-        "-name", "six_axis_arm",
-        "-z", "0.2",
-        "-P", "0.0",
-        "-Y", "0.0"
-    ],
-    output="screen"
-)
-
-
-    # ----------------------------------------------------------------------
-    # ROBOT STATE PUBLISHER
+    # ROBOT STATE PUBLISHER (TF for RViz)
     # ----------------------------------------------------------------------
     robot_state_publisher = Node(
         package="robot_state_publisher",
@@ -60,7 +43,37 @@ def generate_launch_description():
     )
 
     # ----------------------------------------------------------------------
-    # CONTROLLER SPAWNERS
+    # SPAWN ROBOT IN GAZEBO
+    # ----------------------------------------------------------------------
+    spawn_entity = Node(
+        package="ros_gz_sim",
+        executable="create",
+        arguments=[
+            "-topic", "robot_description",
+            "-name", "six_axis_arm",
+            "-z", "0.2"
+        ],
+        output="screen"
+    )
+
+    # ----------------------------------------------------------------------
+    # RVIZ
+    # ----------------------------------------------------------------------
+    rviz_config = os.path.join(
+        get_package_share_directory("arm_gazebo"),
+        "rviz",
+        "arm.rviz"
+    )
+
+    rviz = Node(
+        package="rviz2",
+        executable="rviz2",
+        arguments=["-d", rviz_config],
+        output="screen"
+    )
+
+    # ----------------------------------------------------------------------
+    # CONTROLLERS
     # ----------------------------------------------------------------------
     js_broadcaster = TimerAction(
         period=5.0,
@@ -68,7 +81,10 @@ def generate_launch_description():
             Node(
                 package="controller_manager",
                 executable="spawner",
-                arguments=["joint_state_broadcaster"],
+                arguments=[
+                    "joint_state_broadcaster",
+                    "--controller-manager", "/controller_manager"
+                ],
                 output="screen"
             )
         ]
@@ -80,7 +96,10 @@ def generate_launch_description():
             Node(
                 package="controller_manager",
                 executable="spawner",
-                arguments=["arm_controller"],
+                arguments=[
+                    "arm_controller",
+                    "--controller-manager", "/controller_manager"
+                ],
                 output="screen"
             )
         ]
@@ -92,19 +111,21 @@ def generate_launch_description():
             Node(
                 package="controller_manager",
                 executable="spawner",
-                arguments=["gripper_controller"],
+                arguments=[
+                    "gripper_controller",
+                    "--controller-manager", "/controller_manager"
+                ],
                 output="screen"
             )
         ]
     )
 
     # ----------------------------------------------------------------------
-    # RETURN FINAL LAUNCH
-    # ----------------------------------------------------------------------
     return LaunchDescription([
         gz_sim,
         robot_state_publisher,
         spawn_entity,
+        rviz,
         js_broadcaster,
         arm_controller,
         gripper_controller,
