@@ -1,5 +1,9 @@
 <?xml version="1.0" ?>
-<robot name="six-axis" xmlns:ros2_control="http://www.ros.org/wiki/ros2_control">
+<robot
+  name="six-axis"
+  xmlns:xacro="http://www.ros.org/wiki/xacro"
+  xmlns:ros2_control="http://www.ros.org/wiki/ros2_control">
+
 
     <material name="gray">
         <color rgba="0.75 0.75 0.75 1.0"/>
