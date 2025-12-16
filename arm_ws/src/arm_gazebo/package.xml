@@ -8,15 +8,30 @@
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>gripper_controllers</depend>
+  <depend>gz_msgs_vendor</depend>
+  <depend>gz_ros2_control</depend>
+  <depend>python3-numpy</depend>
+  <depend>rclcpp</depend>
+  <depend>ros_gz</depend>
+  <depend>ros_gz_bridge</depend>
+  <depend>ros_gz_image</depend>
+  <depend>ros_gz_sim</depend>
+  <depend>ros2_control</depend>
+  <depend>ros2_controllers</depend>
+  <depend>trajectory_msgs</depend>
+  <depend>xacro</depend>
+
+  <exec_depend>arm_description</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
   <exec_depend>gazebo_ros</exec_depend>
   <exec_depend>gazebo_ros_pkgs</exec_depend>
-  <exec_depend>ros2_control_node</exec_depend>
-  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>gz_ros2_control_demos</exec_depend>
   <exec_depend>joint_state_broadcaster</exec_depend>
   <exec_depend>joint_trajectory_controller</exec_depend>
   <exec_depend>position_controllers</exec_depend>
-  <exec_depend>arm_description</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>ros2_control_node</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
