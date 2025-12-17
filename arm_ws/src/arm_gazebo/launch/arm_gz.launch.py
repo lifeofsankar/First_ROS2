@@ -20,23 +20,32 @@ def generate_launch_description():
 
     return LaunchDescription([
 
-        # Gazebo
+        # 1️⃣ Gazebo (system process, publishes /clock)
         ExecuteProcess(
             cmd=['gz', 'sim', '-r', world],
             output='screen'
         ),
+        
+        Node(
+            package='ros_gz_bridge',
+            executable='parameter_bridge',
+            arguments=['/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock'],
+            output='screen'
+        ),
 
-        # Robot State Publisher
+
+        # 2️⃣ Robot State Publisher
         Node(
             package='robot_state_publisher',
             executable='robot_state_publisher',
             parameters=[{
-                'robot_description': os.popen(f'xacro {urdf}').read()
+                'robot_description': os.popen(f'xacro {urdf}').read(),
+                'use_sim_time': True
             }],
             output='screen'
         ),
 
-        # Spawn robot in Gazebo
+        # 3️⃣ Spawn robot in Gazebo
         Node(
             package='ros_gz_sim',
             executable='create',
@@ -48,7 +57,7 @@ def generate_launch_description():
             output='screen'
         ),
 
-        # Controllers
+        # 4️⃣ Controllers
         Node(
             package='controller_manager',
             executable='spawner',
