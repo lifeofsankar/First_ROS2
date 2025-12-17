@@ -64,7 +64,7 @@
     <link name="l0">
         <inertial>
             <origin xyz="0 0 0.025"/>
-            <mass value="12.0"/>
+            <mass value="100.0"/>
             <inertia 
                 ixx="0.004" ixy="0.0" ixz="0.0"
                 iyy="0.004" iyz="0.0"
