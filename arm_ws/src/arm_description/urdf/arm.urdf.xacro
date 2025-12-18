@@ -64,7 +64,7 @@
     <link name="l0">
         <inertial>
             <origin xyz="0 0 0.025"/>
-            <mass value="100.0"/>
+            <mass value="100.0"/>  
             <inertia 
                 ixx="0.004" ixy="0.0" ixz="0.0"
                 iyy="0.004" iyz="0.0"
@@ -99,7 +99,7 @@
     <link name="l1">
         <inertial>
         <origin xyz="0 0 0.1"/>
-        <mass value="2.5"/>
+        <mass value="3"/>
         <inertia 
             ixx="0.010" ixy="0.0" ixz="0.0"
             iyy="0.010" iyz="0.0"
@@ -144,7 +144,7 @@
   <link name="l2">
     <inertial>
     <origin xyz="0.125 0 0"/>
-    <mass value="3.0"/>
+    <mass value="2.5"/>
     <inertia 
         ixx="0.022" ixy="0.0" ixz="0.0"
         iyy="0.030" iyz="0.0"
@@ -185,15 +185,15 @@
     <parent link="l2"/>
     <child link="l3"/>
     <axis xyz="0.0 0.0 1.0"/>
-    <limit effort="20.0" lower="-1.5707963267948966" upper="1.5707963267948966" velocity="2.0"/>
-    <dynamics damping="0.2" friction="0.05"/>
+    <limit effort="30.0" lower="-1.5707963267948966" upper="1.5707963267948966" velocity="2.0"/>
+    <dynamics damping="0.2" friction="0.08"/>
 
   </joint>
 
   <link name="l3">
     <inertial>
     <origin xyz="-0.15 0 0"/>
-    <mass value="2.5"/>
+    <mass value="2.2"/>
     <inertia 
         ixx="0.015" ixy="0.0" ixz="0.0"
         iyy="0.020" iyz="0.0"
