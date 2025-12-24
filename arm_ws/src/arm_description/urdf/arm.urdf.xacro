@@ -579,9 +579,9 @@
   <link name="tool0"/>
   
   <joint name="g_base_to_tool0" type="fixed">
-    <origin xyz="0 0 0.15" rpy="0 0 0"/>
-    <parent link="g_base"/>
-    <child link="tool0"/>
+      <origin xyz="0 0 0.03" rpy="0 0 0"/>
+      <parent link="g_base"/>
+      <child link="tool0"/>
   </joint>
 
   <xacro:include filename="six-axis.ros2_control.xacro" />

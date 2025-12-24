@@ -27,6 +27,7 @@ setup(
             'move_arm = arm_python_control.move_arm:main',
             'move_arm_cartesian = arm_python_control.move_arm_cartesian:main',
             'pick_and_place = arm_python_control.pick_and_place:main',
+            'mtc_pick_and_place = arm_python_control.mtc_pick_and_place:main',
             'add_box_moveit = arm_python_control.add_box_moveit:main',
         ],
     },
