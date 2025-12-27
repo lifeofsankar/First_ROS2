@@ -5,24 +5,27 @@ from rclpy.node import Node
 from rclpy.action import ActionClient
 import time
 
+# MoveIt action + message types
 from moveit_msgs.action import MoveGroup
 from moveit_msgs.msg import (
-    Constraints,
-    JointConstraint,
-    CollisionObject,
-    AttachedCollisionObject
+    Constraints, JointConstraint,
+    CollisionObject, AttachedCollisionObject
 )
 
+# Geometry + shapes
 from shape_msgs.msg import SolidPrimitive
 from geometry_msgs.msg import Pose
 
+# Gripper controller
+from trajectory_msgs.msg import JointTrajectory, JointTrajectoryPoint
 
-class PickAndPlaceMoveIt(Node):
+
+class PickAndPlace(Node):
 
     def __init__(self):
-        super().__init__('pick_and_place_moveit')
+        super().__init__('pick_and_place')
 
-        # MoveIt action
+        # MoveIt controller
         self.moveit = ActionClient(self, MoveGroup, '/move_action')
 
         # Planning scene publishers
@@ -38,18 +41,31 @@ class PickAndPlaceMoveIt(Node):
             10
         )
 
-    # ------------------ MOVE ARM (JOINT SPACE) ------------------
-    def move_joints(self, joints, wait=3.0):
+        # Gripper controller
+        self.gripper_pub = self.create_publisher(
+            JointTrajectory,
+            '/gripper_controller/joint_trajectory',
+            10
+        )
+
+    # ----------------------------------------------------------------------
+    # MOVE ARM USING JOINT SPACE
+    # ----------------------------------------------------------------------
+    def move_joints(self, targets, wait=3.0):
+
         goal = MoveGroup.Goal()
         goal.request.group_name = 'arm'
         goal.request.allowed_planning_time = 5.0
+        
+        goal.request.execute = True
+
 
         constraints = Constraints()
 
-        for name, pos in joints.items():
+        for joint, position in targets.items():
             jc = JointConstraint()
-            jc.joint_name = name
-            jc.position = float(pos)
+            jc.joint_name = joint
+            jc.position = float(position)
             jc.tolerance_above = 0.01
             jc.tolerance_below = 0.01
             jc.weight = 1.0
@@ -60,9 +76,12 @@ class PickAndPlaceMoveIt(Node):
         self.moveit.wait_for_server()
         future = self.moveit.send_goal_async(goal)
         rclpy.spin_until_future_complete(self, future)
+
         time.sleep(wait)
 
-    # ------------------ ADD OBJECT ------------------
+    # ----------------------------------------------------------------------
+    # ADD BOX INTO MOVEIT SCENE
+    # ----------------------------------------------------------------------
     def add_box(self):
         box = CollisionObject()
         box.id = "box1"
@@ -82,72 +101,141 @@ class PickAndPlaceMoveIt(Node):
         box.operation = CollisionObject.ADD
 
         self.collision_pub.publish(box)
-        self.get_logger().info("🟦 Box added to MoveIt")
-        time.sleep(1.0)
+        self.get_logger().info("🟦 Added box to planning scene")
+        time.sleep(1)
 
-    # ------------------ ATTACH (PICK) ------------------
+    # ----------------------------------------------------------------------
+    # ATTACH BOX TO g_base
+    # ----------------------------------------------------------------------
     def attach_box(self):
         attach = AttachedCollisionObject()
-        attach.link_name = "tool0"
+        attach.link_name = "g_base"   # TOOL FRAME BASE
+
+        # remove box from world and attach to robot
         attach.object.id = "box1"
-        attach.object.operation = attach.object.ADD
+        attach.object.operation = CollisionObject.REMOVE
+
         attach.touch_links = [
-            "tool0",
+            "g_base",
             "gripper_left_finger",
             "gripper_right_finger"
         ]
 
         self.attach_pub.publish(attach)
-        self.get_logger().info("📎 Box attached")
-        time.sleep(1.0)
+        self.get_logger().info("📎 Box attached to g_base")
+        time.sleep(1)
 
-    # ------------------ DETACH (PLACE) ------------------
+    # ----------------------------------------------------------------------
+    # DETACH BOX
+    # ----------------------------------------------------------------------
     def detach_box(self):
+        # 1) Remove attachment
         detach = AttachedCollisionObject()
         detach.object.id = "box1"
-        detach.object.operation = detach.object.REMOVE
+        detach.object.operation = CollisionObject.REMOVE  # <-- FIXED
 
         self.attach_pub.publish(detach)
-        self.get_logger().info("📦 Box detached")
+        self.get_logger().info("📦 Detached box from g_base")
+        time.sleep(0.5)
+
+        # 2) Re-add to world
+        world = CollisionObject()
+        world.id = "box1"
+        world.header.frame_id = "base_link"
+        world.operation = CollisionObject.ADD
+
+        primitive = SolidPrimitive()
+        primitive.type = SolidPrimitive.BOX
+        primitive.dimensions = [0.05, 0.05, 0.05]
+
+        pose = Pose()
+        pose.position.x = 0.50
+        pose.position.y = 0.00
+        pose.position.z = 0.025
+
+        world.primitives.append(primitive)
+        world.primitive_poses.append(pose)
+
+        self.collision_pub.publish(world)
+        self.get_logger().info("📦 Box added back to world")
         time.sleep(1.0)
 
-    # ------------------ PICK AND PLACE SEQUENCE ------------------
-    def execute(self):
-        self.get_logger().info("▶ Starting MoveIt Pick & Place")
 
-        # Add object
+
+    # ----------------------------------------------------------------------
+    # SET GRIPPER POSITION
+    # ----------------------------------------------------------------------
+    def set_gripper(self, pos):
+        msg = JointTrajectory()
+        msg.joint_names = ['gripper_right_finger_joint']
+
+        pt = JointTrajectoryPoint()
+        pt.positions = [float(pos)]
+        pt.time_from_start.sec = 1
+
+        msg.points.append(pt)
+        self.gripper_pub.publish(msg)
+
+        time.sleep(1.2)
+
+    # ----------------------------------------------------------------------
+    # EXECUTE PICK & PLACE
+    # ----------------------------------------------------------------------
+    def execute(self):
+        self.get_logger().info("▶ Pick & Place START")
+
+        # Add object to world
         self.add_box()
 
-        # Pre-grasp
+        # 1) Move to pre-grasp
+        self.set_gripper(0.04)  # open
         self.move_joints({
-            'j1': 0.0, 'j2': -1.0, 'j3': 1.2,
-            'j4': 0.0, 'j5': 1.0, 'j6': 0.0
+            'j1': 0.0,
+            'j2': -1.0,
+            'j3': 1.2,
+            'j4': 0.0,
+            'j5': 1.0,
+            'j6': 0.0
         })
 
-        # Pick (attach)
+        # 2) Close gripper
+        self.set_gripper(0.0)
+
+        # 3) Attach object
         self.attach_box()
 
-        # Lift
+        # 4) Lift
         self.move_joints({
-            'j1': 0.0, 'j2': -0.6, 'j3': 0.8,
-            'j4': 0.0, 'j5': 0.8, 'j6': 0.0
+            'j1': 0.0,
+            'j2': -0.6,
+            'j3': 1.0,
+            'j4': 0.0,
+            'j5': 1.0,
+            'j6': 0.0
         })
 
-        # Move to place
+        # 5) Move to place
         self.move_joints({
-            'j1': 1.57, 'j2': -1.0, 'j3': 1.2,
-            'j4': 0.0, 'j5': 1.0, 'j6': 0.0
+            'j1': 1.57,
+            'j2': -1.0,
+            'j3': 1.2,
+            'j4': 0.0,
+            'j5': 1.0,
+            'j6': 0.0
         })
 
-        # Place (detach)
+        # 6) Detach object
         self.detach_box()
 
-        self.get_logger().info("✅ Pick & Place finished")
+        # Open gripper
+        self.set_gripper(0.04)
+
+        self.get_logger().info("✅ Pick & Place COMPLETE")
 
 
 def main():
     rclpy.init()
-    node = PickAndPlaceMoveIt()
+    node = PickAndPlace()
     node.execute()
     rclpy.shutdown()
 

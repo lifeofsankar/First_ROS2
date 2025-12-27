@@ -7,8 +7,11 @@ controller_manager:
       type: joint_trajectory_controller/JointTrajectoryController
 
 
+    # gripper_controller:
+    #   type: joint_trajectory_controller/JointTrajectoryController
+
     gripper_controller:
-      type: joint_trajectory_controller/JointTrajectoryController
+      type: effort_controllers/JointGroupEffortController
 
 
     joint_state_broadcaster:
@@ -34,7 +37,7 @@ gripper_controller:
     joints:
       - gripper_right_finger_joint
     command_interfaces:
-      - position
+      - effort
     state_interfaces:
       - position
       - velocity
