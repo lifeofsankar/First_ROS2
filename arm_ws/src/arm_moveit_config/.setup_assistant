@@ -22,4 +22,4 @@ moveit_setup_assistant_config:
       - position
     state:
       - position
-      - velocity
+      - velocityz

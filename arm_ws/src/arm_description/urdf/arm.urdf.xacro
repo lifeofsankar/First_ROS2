@@ -485,7 +485,7 @@
 
   <!-- Connect wrist to gripper base -->
   <joint name="le_1_to_g_base" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0.1"/>
+    <origin xyz="0 0 0.10"/>
     <parent link="le_1"/>
     <child link="g_base"/>
   </joint>
@@ -593,9 +593,9 @@
   <link name="tool0"/>
   
   <joint name="g_base_to_tool0" type="fixed">
-      <origin xyz="0 0 0.13" rpy="0 0 0"/>
-      <parent link="g_base"/>
-      <child link="tool0"/>
+    <origin xyz="0 0 0.03" rpy="3.14159 0 0"/>
+    <parent link="g_base"/>
+    <child link="tool0"/>
   </joint>
 
   <xacro:include filename="six-axis.ros2_control.xacro" />

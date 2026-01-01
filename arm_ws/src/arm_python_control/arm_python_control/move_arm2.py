@@ -93,60 +93,37 @@ class ArmPickPlaceClient(Node):
         
         if future.result() is not None and future.result().success:
             self.get_logger().info(f'✓ Added "{obj_id}" at ({x:.2f}, {y:.2f}, {z:.2f})')
-
-            # IMPORTANT: give MoveIt time to sync the planning scene
-            time.sleep(2.5)
-
             return True
-
         else:
             self.get_logger().error(f'✗ Failed to add "{obj_id}"')
             return False
 
     def attach_object(self, obj_id, link_name='tool0'):
+        """Attach object to gripper"""
         from moveit_msgs.msg import PlanningScene
-
-        aco = AttachedCollisionObject()
-        aco.link_name = link_name
-
-        # REQUIRED
-        aco.object.id = obj_id
-        aco.object.header.frame_id = link_name
-        aco.object.header.stamp = self.get_clock().now().to_msg()
-        aco.object.operation = CollisionObject.ADD
-
-
-        aco.touch_links = [
-            'tool0',
-            'g_base',
-            'gripper_left_finger',
-            'gripper_right_finger'
-        ]
-
-        ps = PlanningScene()
-        ps.robot_state.attached_collision_objects.append(aco)
-
-        # Remove from world
-        co = CollisionObject()
-        co.id = obj_id
-        co.operation = CollisionObject.REMOVE
-        ps.world.collision_objects.append(co)
-
-        ps.is_diff = True
-
-        req = ApplyPlanningScene.Request()
-        req.scene = ps
-
-        future = self.scene_client.call_async(req)
-        rclpy.spin_until_future_complete(self, future)
-
-        if future.result() and future.result().success:
-            self.get_logger().info(f'✓ Attached "{obj_id}"')
+        
+        attached_object = AttachedCollisionObject()
+        attached_object.link_name = link_name
+        attached_object.object.id = obj_id
+        attached_object.object.operation = CollisionObject.ADD
+        attached_object.touch_links = ['tool0', 'g_base', 'gripper_left_finger', 'gripper_right_finger', 'le_1']
+        
+        planning_scene = PlanningScene()
+        planning_scene.robot_state.attached_collision_objects.append(attached_object)
+        planning_scene.is_diff = True
+        
+        request = ApplyPlanningScene.Request()
+        request.scene = planning_scene
+        
+        future = self.scene_client.call_async(request)
+        rclpy.spin_until_future_complete(self, future, timeout_sec=5.0)
+        
+        if future.result() is not None and future.result().success:
+            self.get_logger().info(f'✓ Attached "{obj_id}" to gripper')
             return True
-
-        self.get_logger().error('✗ Attach FAILED')
-        return False
-
+        else:
+            self.get_logger().error(f'✗ Failed to attach "{obj_id}"')
+            return False
 
     def detach_object(self, obj_id, link_name='tool0'):
         """Detach object from gripper"""
@@ -170,15 +147,40 @@ class ArmPickPlaceClient(Node):
         if future.result() is not None and future.result().success:
             self.get_logger().info(f'✓ Detached "{obj_id}" from gripper')
             return True
-        return True
+        else:
+            self.get_logger().error(f'✗ Failed to detach "{obj_id}"')
+            return False
+
+    def remove_object(self, obj_id):
+        """Remove object from scene"""
+        from moveit_msgs.msg import PlanningScene
+        
+        collision_object = CollisionObject()
+        collision_object.header = Header(frame_id='base_link')
+        collision_object.id = obj_id
+        collision_object.operation = CollisionObject.REMOVE
+        
+        planning_scene = PlanningScene()
+        planning_scene.world.collision_objects.append(collision_object)
+        planning_scene.is_diff = True
+        
+        request = ApplyPlanningScene.Request()
+        request.scene = planning_scene
+        
+        future = self.scene_client.call_async(request)
+        rclpy.spin_until_future_complete(self, future, timeout_sec=5.0)
+        
+        if future.result() is not None and future.result().success:
+            self.get_logger().info(f'✓ Removed "{obj_id}"')
+            return True
+        return False
 
     def send_cartesian_goal(self, x, y, z, orientation_w=1.0):
         """Send cartesian goal"""
         goal = MoveGroup.Goal()
         goal.request.group_name = 'arm'
-        goal.request.allowed_planning_time = 10.0
-        goal.request.num_planning_attempts = 5
-
+        goal.request.allowed_planning_time = 15.0
+        goal.request.num_planning_attempts = 20
         goal.request.max_velocity_scaling_factor = 0.15
         goal.request.max_acceleration_scaling_factor = 0.15
 
@@ -195,7 +197,7 @@ class ArmPickPlaceClient(Node):
 
         box = SolidPrimitive()
         box.type = SolidPrimitive.BOX
-        box.dimensions = [0.10, 0.10, 0.10]  # Increased tolerance
+        box.dimensions = [0.03, 0.03, 0.03]
 
         constraint.constraint_region.primitives.append(box)
         constraint.constraint_region.primitive_poses.append(pose.pose)
@@ -221,105 +223,109 @@ class ArmPickPlaceClient(Node):
                     result = result_future.result().result
                     error_code = result.error_code.val
                     
+                    error_messages = {
+                        1: "SUCCESS",
+                        -1: "FAILURE",
+                        -2: "PLANNING_FAILED",
+                        -3: "INVALID_MOTION_PLAN",
+                        -4: "MOTION_PLAN_INVALIDATED_BY_ENVIRONMENT_CHANGE",
+                        -5: "CONTROL_FAILED",
+                        -6: "UNABLE_TO_AQUIRE_SENSOR_DATA",
+                        -7: "TIMED_OUT",
+                        -10: "NO_IK_SOLUTION",
+                        -31: "GOAL_IN_COLLISION"
+                    }
+                    
                     if error_code == MoveItErrorCodes.SUCCESS:
                         self.get_logger().info('  ✓ Motion complete')
                         return True
                     else:
-                        self.get_logger().error(f'  ✗ Failed (error: {error_code})')
+                        error_msg = error_messages.get(error_code, f"UNKNOWN_ERROR_{error_code}")
+                        self.get_logger().error(f'  ✗ Failed: {error_msg}')
                         return False
         
         self.get_logger().error('  ✗ Goal rejected or timeout')
         return False
 
     def pick_and_place(self):
-        """Execute pick and place"""
+        """Execute pick and place with SAFER positions"""
         
         self.get_logger().info('\n' + '='*60)
         self.get_logger().info('    PICK AND PLACE DEMO')
         self.get_logger().info('='*60 + '\n')
         
-        # Adjusted coordinates - higher object, more clearance
-        pick_x, pick_y, pick_z = 0.35, 0.0, 0.12  # Raised object to 12cm
-        place_x, place_y, place_z = 0.35, 0.10, 0.12
+        # More conservative positions
+        pick_x, pick_y, pick_z = 0.35, 0.0, 0.1
+        place_x, place_y, place_z = 0.30, 0.15, 0.1
         
         self.get_logger().info('SETUP: Adding objects')
-        self.add_object_to_scene('table', 0.35, 0.0, 0.0, 0.6, 0.6, 0.04)  # Table at ground level
+        self.add_object_to_scene('table', 0.35, 0.0, -0.02, 0.6, 0.6, 0.04)
         time.sleep(0.5)
         self.add_object_to_scene('target_box', pick_x, pick_y, pick_z, 0.04, 0.04, 0.04)
-        time.sleep(3.0)
-
+        time.sleep(1.0)
+        
         self.get_logger().info('\nSTEP 1: Opening gripper')
         self.control_gripper(0.05)
         time.sleep(1.5)
         
-        self.get_logger().info('\nSTEP 2: Moving above pick location')
-        if not self.send_cartesian_goal(pick_x, pick_y, pick_z + 0.12):  # 12cm above
+        self.get_logger().info('\nSTEP 2: Moving above object')
+        if not self.send_cartesian_goal(pick_x, pick_y, pick_z + 0.15):
+            self.get_logger().error('ABORT: Cannot reach above pick location')
             return
         time.sleep(1.5)
         
-        self.get_logger().info('\nSTEP 3: Lowering to object (gradual)')
-        # Move in stages for more reliable planning
-        if not self.send_cartesian_goal(pick_x, pick_y, pick_z + 0.08):  # 8cm above
+        self.get_logger().info('\nSTEP 3: Lowering to object')
+        if not self.send_cartesian_goal(pick_x, pick_y, pick_z + 0.06):
+            self.get_logger().error('ABORT: Cannot reach pick location')
             return
         time.sleep(1.5)
         
-        self.get_logger().info('\nSTEP 4: Closing gripper')
+        self.get_logger().info('\nSTEP 4: Gripping')
         self.control_gripper(0.0)
         time.sleep(2.0)
         
-        self.get_logger().info('\nSTEP 5: Attaching object to gripper')
+        self.get_logger().info('\nSTEP 5: Attaching object')
         if not self.attach_object('target_box', 'tool0'):
-            self.get_logger().error('ABORT: Attach failed')
-            return
-        time.sleep(1.0)
-
-        
-        self.get_logger().info('\nSTEP 6: Lifting object (gradual)')
-        if not self.send_cartesian_goal(pick_x, pick_y, pick_z + 0.08):
-            self.get_logger().error('ABORT: Cannot lift slightly')
             return
         time.sleep(1.0)
         
-        if not self.send_cartesian_goal(pick_x, pick_y, pick_z + 0.12):
-            self.get_logger().error('ABORT: Cannot lift fully')
+        self.get_logger().info('\nSTEP 6: Lifting')
+        if not self.send_cartesian_goal(pick_x, pick_y, pick_z + 0.15):
+            self.get_logger().error('ABORT: Cannot lift')
             return
         time.sleep(1.5)
         
-        self.get_logger().info('\nSTEP 7: Moving to place location')
-        if not self.send_cartesian_goal(place_x, place_y, place_z + 0.12):
+        self.get_logger().info('\nSTEP 7: Moving to place')
+        if not self.send_cartesian_goal(place_x, place_y, place_z + 0.15):
             self.get_logger().error('ABORT: Cannot reach place location')
             return
         time.sleep(1.5)
         
-        self.get_logger().info('\nSTEP 8: Lowering to place')
-        if not self.send_cartesian_goal(place_x, place_y, place_z + 0.05):
+        self.get_logger().info('\nSTEP 8: Lowering')
+        if not self.send_cartesian_goal(place_x, place_y, place_z + 0.06):
+            self.get_logger().error('ABORT: Cannot lower')
             return
         time.sleep(1.5)
         
-        self.get_logger().info('\nSTEP 9: Detaching object')
+        self.get_logger().info('\nSTEP 9: Detaching')
         self.detach_object('target_box', 'tool0')
         time.sleep(1.0)
         
-        self.get_logger().info('\nSTEP 10: Adding object at new location')
+        self.get_logger().info('\nSTEP 10: Updating object position')
+        self.remove_object('target_box')
+        time.sleep(0.5)
         self.add_object_to_scene('target_box', place_x, place_y, place_z, 0.04, 0.04, 0.04)
         time.sleep(1.0)
         
-        self.get_logger().info('\nSTEP 11: Opening gripper')
+        self.get_logger().info('\nSTEP 11: Releasing')
         self.control_gripper(0.05)
         time.sleep(2.0)
         
         self.get_logger().info('\nSTEP 12: Moving away')
-        # Small retreat first
-        self.send_cartesian_goal(place_x, place_y, place_z + 0.05)
-        time.sleep(0.5)
-
-        # Full retreat
-        self.send_cartesian_goal(place_x, place_y, place_z + 0.12)
-
+        self.send_cartesian_goal(place_x, place_y, place_z + 0.15)
         
         self.get_logger().info('\n' + '='*60)
-        self.get_logger().info('    ✓✓✓ PICK AND PLACE COMPLETE! ✓✓✓')
-        self.get_logger().info('    Object moved from (0.35, 0.0) to (0.35, 0.1)')
+        self.get_logger().info('    ✓✓✓ COMPLETE ✓✓✓')
         self.get_logger().info('='*60 + '\n')
 
 
